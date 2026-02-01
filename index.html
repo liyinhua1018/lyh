@@ -100,15 +100,30 @@
             }
         }
 
-        /* 光标跟随粒子 */
-        .cursor-particle {
+        /* 光标跟随星星 */
+        .cursor-star {
             position: fixed;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+            width: 12px;
+            height: 12px;
             pointer-events: none;
             z-index: -1;
-            opacity: 0.7;
+            opacity: 0;
+            transform-origin: center;
+        }
+
+        .star-shape {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: starRotate 1s linear infinite;
+        }
+
+        @keyframes starRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(0.8); }
+            100% { transform: rotate(360deg) scale(1); }
         }
 
         /* 彩色光晕 */
@@ -395,19 +410,37 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
 
-        /* 添加更多小字 */
+        /* 修改小字样式 */
         .more-hint {
             margin-top: 15px;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-style: italic;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
             text-align: center;
-            animation: wink 2s infinite;
+            background: linear-gradient(135deg, rgba(42, 157, 143, 0.2), rgba(233, 196, 106, 0.1));
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            font-style: normal; /* 移除斜体 */
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes wink {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        .more-hint::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
         .optimization p {
@@ -532,6 +565,25 @@
             transform: translateY(-3px) rotate(10deg);
         }
 
+        /* 作者信息 - 不显眼处 */
+        .author-info {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .author-info:hover {
+            opacity: 1;
+            color: rgba(233, 196, 106, 0.8);
+            transform: translateY(-2px);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -567,6 +619,13 @@
                 padding: 8px 16px;
                 font-size: 0.95rem;
             }
+            
+            .author-info {
+                bottom: 10px;
+                right: 10px;
+                font-size: 0.7rem;
+                opacity: 0.4;
+            }
         }
 
         @media (max-width: 480px) {
@@ -584,6 +643,15 @@
             font-weight: 600;
             color: var(--dark);
         }
+
+        /* 模组标签颜色 */
+        .mod-tag.combat { background: linear-gradient(135deg, #e76f51, #f4a261); }
+        .mod-tag.dimension { background: linear-gradient(135deg, #9d4edd, #c77dff); }
+        .mod-tag.creature { background: linear-gradient(135deg, #2a9d8f, #4cc9f0); }
+        .mod-tag.tech { background: linear-gradient(135deg, #f8961e, #f9c74f); }
+        .mod-tag.companion { background: linear-gradient(135deg, #e63946, #ff6b6b); }
+        .mod-tag.life { background: linear-gradient(135deg, #52b788, #95d5b2); }
+        .mod-tag.dungeon { background: linear-gradient(135deg, #6a040f, #9d0208); }
     </style>
 </head>
 <body>
@@ -600,6 +668,11 @@
     <div class="floating-cube" style="top: 60%; right: 10%; animation-delay: 5s; width: 40px; height: 40px;"></div>
     <div class="floating-cube" style="top: 80%; left: 15%; animation-delay: 10s; width: 80px; height: 80px;"></div>
     <div class="floating-cube" style="top: 30%; right: 20%; animation-delay: 15s; width: 50px; height: 50px;"></div>
+
+    <!-- 作者信息 -->
+    <div class="author-info" title="页面设计者">
+        <i class="fas fa-code"></i> 作者：梨音花
+    </div>
 
     <div class="container">
         <header>
@@ -659,9 +732,9 @@
                         <span class="mod-tag life">森罗物语</span>
                         <span class="mod-tag dungeon">地牢浮现</span>
                     </div>
-                    <!-- 添加的小字 -->
+                    <!-- 修改后的小字 -->
                     <div class="more-hint">
-                        （也许还有更多？）<span style="font-size: 1.2rem;">😉</span>
+                        <span style="display: inline-block; transform: translateY(-1px);">✨</span> 也许还有更多呢？😘<span style="display: inline-block; transform: translateY(-1px);">✨</span>
                     </div>
                 </div>
                 
@@ -721,11 +794,12 @@
                 </div>
                 <div>
                     <span class="version-badge" style="background: var(--primary);">V4 版本</span>
-                    <h2>🚀 26/2/2 4:01 更新 - 性能优化版</h2>
+                    <h2>🚀 26/2/2 4:16 更新</h2>
                 </div>
             </div>
             <ul class="update-list">
-                <li>对整合包做了大量优化，群友说他的渣机电脑都能跑了(甚至FCL都有40帧）</li>
+                <li>对整合包做了大量优化，群友说他的渣机电脑都能跑了</li>
+                <li>(甚至FCL都有40帧）<li>
                 <li>增加了模组：灵魂出窍</li>
                 <li>增加了模组：（哎呀一堆小的体验优化模组）</li>
                 <li>对的这三天都在忙着优化（</li>
@@ -779,7 +853,7 @@
             </div>
             <p>页面最后更新于 2025年2月 | 本网站托管于 GitHub Pages</p>
             <p style="margin-top: 10px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">
-                <i class="fas fa-info-circle"></i> 使用现代CSS技术设计 | 响应式布局 | 交互式背景
+                <i class="fas fa-info-circle"></i> 这个文档乱做的 | Ai太好用了知道吗 | 所以你会来服务器吗
             </p>
         </div>
     </div>
@@ -801,40 +875,55 @@
             }
         }
 
-        // 创建光标跟随粒子
-        const particles = [];
+        // 创建光标跟随星星（替换原来的粒子效果）
+        const starParticles = [];
         document.addEventListener('mousemove', (e) => {
-            if (Math.random() > 0.7 && particles.length < 50) {
-                createParticle(e.clientX, e.clientY);
+            if (Math.random() > 0.6 && starParticles.length < 30) {
+                createStarParticle(e.clientX, e.clientY);
             }
         });
 
-        function createParticle(x, y) {
-            const particle = document.createElement('div');
-            particle.className = 'cursor-particle';
-            particle.style.left = x + 'px';
-            particle.style.top = y + 'px';
+        function createStarParticle(x, y) {
+            const starParticle = document.createElement('div');
+            starParticle.className = 'cursor-star';
+            starParticle.style.left = x + 'px';
+            starParticle.style.top = y + 'px';
             
-            const colors = ['#2a9d8f', '#e9c46a', '#e76f51', '#9d4edd'];
-            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            const starShape = document.createElement('div');
+            starShape.className = 'star-shape';
             
-            document.body.appendChild(particle);
-            particles.push(particle);
+            const colors = ['#2a9d8f', '#e9c46a', '#e76f51', '#9d4edd', '#4cc9f0'];
+            starShape.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             
-            // 粒子动画
+            starParticle.appendChild(starShape);
+            document.body.appendChild(starParticle);
+            starParticles.push(starParticle);
+            
+            // 星星出现动画
             setTimeout(() => {
-                particle.style.transition = 'all 1s ease';
-                particle.style.opacity = '0';
-                particle.style.transform = 'translate(' + 
-                    (Math.random() * 100 - 50) + 'px, ' + 
-                    (Math.random() * 100 - 50) + 'px) scale(0)';
+                starParticle.style.transition = 'all 0.3s ease';
+                starParticle.style.opacity = '0.8';
+                
+                // 随机移动方向
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 30 + 20;
+                const targetX = x + Math.cos(angle) * distance;
+                const targetY = y + Math.sin(angle) * distance;
                 
                 setTimeout(() => {
-                    document.body.removeChild(particle);
-                    const index = particles.indexOf(particle);
-                    if (index > -1) particles.splice(index, 1);
-                }, 1000);
-            }, 100);
+                    starParticle.style.transition = 'all 1.5s ease';
+                    starParticle.style.left = targetX + 'px';
+                    starParticle.style.top = targetY + 'px';
+                    starParticle.style.opacity = '0';
+                    starParticle.style.transform = 'scale(0)';
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(starParticle);
+                        const index = starParticles.indexOf(starParticle);
+                        if (index > -1) starParticles.splice(index, 1);
+                    }, 1500);
+                }, 300);
+            }, 10);
         }
 
         // 复制文本到剪贴板功能
@@ -844,8 +933,8 @@
                 event.target.textContent = '已复制!';
                 event.target.style.background = 'var(--success)';
                 
-                // 添加复制成功粒子效果
-                createSuccessParticles(event.target);
+                // 添加复制成功星星效果
+                createSuccessStars(event.target);
                 
                 setTimeout(() => {
                     event.target.textContent = originalText;
@@ -856,33 +945,16 @@
             });
         }
 
-        // 复制成功粒子效果
-        function createSuccessParticles(element) {
+        // 复制成功星星效果
+        function createSuccessStars(element) {
             const rect = element.getBoundingClientRect();
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 8; i++) {
                 setTimeout(() => {
-                    const particle = document.createElement('div');
-                    particle.className = 'cursor-particle';
-                    particle.style.left = rect.left + rect.width / 2 + 'px';
-                    particle.style.top = rect.top + rect.height / 2 + 'px';
-                    particle.style.backgroundColor = '#2a9d8f';
-                    particle.style.width = '6px';
-                    particle.style.height = '6px';
-                    
-                    document.body.appendChild(particle);
-                    
-                    setTimeout(() => {
-                        particle.style.transition = 'all 0.5s ease';
-                        particle.style.opacity = '0';
-                        particle.style.transform = 'translate(' + 
-                            (Math.random() * 60 - 30) + 'px, ' + 
-                            (Math.random() * 60 - 30) + 'px) scale(0)';
-                        
-                        setTimeout(() => {
-                            document.body.removeChild(particle);
-                        }, 500);
-                    }, 10);
-                }, i * 50);
+                    createStarParticle(
+                        rect.left + rect.width / 2,
+                        rect.top + rect.height / 2
+                    );
+                }, i * 100);
             }
         }
 
@@ -932,10 +1004,13 @@
         }
 
         function createGamepadEffect() {
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 15; i++) {
                 setTimeout(() => {
-                    createParticle(Math.random() * window.innerWidth, Math.random() * 100);
-                }, i * 100);
+                    createStarParticle(
+                        Math.random() * window.innerWidth,
+                        Math.random() * 100
+                    );
+                }, i * 80);
             }
         }
 
@@ -1020,6 +1095,18 @@
             document.querySelectorAll('.mod-tag').forEach(tag => {
                 tag.addEventListener('click', function() {
                     this.style.transform = 'scale(0.95)';
+                    
+                    // 点击时创建星星效果
+                    const rect = this.getBoundingClientRect();
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            createStarParticle(
+                                rect.left + rect.width / 2,
+                                rect.top + rect.height / 2
+                            );
+                        }, i * 100);
+                    }
+                    
                     setTimeout(() => {
                         this.style.transform = '';
                     }, 150);
